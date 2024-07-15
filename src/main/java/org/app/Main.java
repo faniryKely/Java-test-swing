@@ -1,14 +1,15 @@
 package org.app;
 
+import org.app.Swing.FormSignIn;
+
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
-import java.awt.*;
 
 public class Main {
     public static void main(String[] args) throws  Exception {
         UIManager.setLookAndFeel(new NimbusLookAndFeel());
 
-        MyWindow window = new MyWindow();
+        FormSignIn window = new FormSignIn();
         window.setVisible(true);
 
         window.setLocationRelativeTo(null);
