@@ -1,6 +1,7 @@
 package org.app.Swing;
 
 import jdk.swing.interop.DispatcherWrapper;
+import org.app.Model.Player;
 import org.app.Model.User;
 import org.app.Service.LoginService;
 
@@ -13,7 +14,6 @@ import java.awt.event.WindowEvent;
 public class RegistrationForm extends JDialog{
     private JTextField tfName;
     private JTextField tfFirstName;
-    private JTextField tfEmail;
     private JPasswordField passwordField;
     private JPasswordField confirmPsw;
     private JButton btnRegister;
@@ -34,7 +34,9 @@ public class RegistrationForm extends JDialog{
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 registerUser();
-                JOptionPane.showMessageDialog(RegistrationForm.this, "User registered successfully!");
+                JOptionPane.showMessageDialog(RegistrationForm.this, " " + player.getName() + " registered successfully!" ) ;
+                JFrame ACCEUIL = new Acceuil();
+                ACCEUIL.setVisible(true);
             }
         });
         btnCancel.addActionListener(new ActionListener() {
@@ -49,13 +51,12 @@ public class RegistrationForm extends JDialog{
 
     private void registerUser() {
         // user information
-        String firstName = tfName.getText();
+        String name = tfName.getText();
         String lastName = tfFirstName.getText();
-        String email = tfEmail.getText();
         String password = new String(passwordField.getPassword());
         String confirmPassword = new String(confirmPsw.getPassword());
 
-        if(firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+        if(name.isEmpty() || lastName.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             JOptionPane.showMessageDialog(
                     this,
                     "Please fill all fields",
@@ -69,21 +70,25 @@ public class RegistrationForm extends JDialog{
             JOptionPane.showMessageDialog(this, "Passwords do not match", "Try Again", JOptionPane.ERROR_MESSAGE);
 
         }
+        if (password.length() < 8) {
+            JOptionPane.showMessageDialog(this, "Password must be at least 8 characters", "Try Again", JOptionPane.ERROR_MESSAGE);
 
-       LoginService service = new LoginService();
-       user =  service.SaveUser(new User(
-                firstName,
+        }
+
+        var service = new LoginService();
+       player =  service.saveUser(new Player(
+                name,
                 lastName,
-                email,
                 password
         ));
-        if(user != null) {
+
+        if(player != null) {
             dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Something went wrong", "Try Again", JOptionPane.ERROR_MESSAGE);
         }
 
     }
-    public User user;
+    public Player player;
 
 }

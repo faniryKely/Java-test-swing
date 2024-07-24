@@ -6,7 +6,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class PostgresConfig {
-    private final String URL = "jdbc:postgresql://localhost:5432/swingtest";
-    private final String USERNAME = "postgres";
-    private final String PASSWORD = "faniry@2002";
+    private final String URL = System.getenv("DB_URL");
+    private final String USERNAME = System.getenv("DB_USERNAME");
+    private final String PASSWORD = System.getenv("DB_PASSWORD");
 }

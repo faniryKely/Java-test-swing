@@ -1,35 +1,39 @@
 package org.app.Service;
 
 import org.app.Database.DbConfig;
+import org.app.Model.Player;
 import org.app.Model.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+
 
 public class LoginService {
 
-    public User SaveUser(User user) {
+    public Player saveUser(Player player) {
         DbConfig dbConfig = new DbConfig();
-        Connection connection = dbConfig.createConnection();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
 
-        String sql = "INSERT INTO \"user\" (name, last_name, email, password) VALUES (name = ?, last_name = ?, email = ?, password = ? )";
+        String sql = "INSERT INTO player (name, last_name, password) VALUES (?, ?, ?)";
 
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, user.getFirstName());
-            preparedStatement.setString(2, user.getLastName());
-            preparedStatement.setString(3, user.getEmail());
-            preparedStatement.setString(4, user.getPassword());
+            connection = dbConfig.createConnection();
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, player.getName());
+            preparedStatement.setString(2, player.getLastName());
+            preparedStatement.setString(3, player.getPassword());
             preparedStatement.executeUpdate();
-
-
-            preparedStatement.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
                 if (connection != null) {
                     connection.close();
                 }
@@ -37,6 +41,42 @@ public class LoginService {
                 ex.printStackTrace();
             }
         }
-        return user;
+        return player;
+    }
+
+    public List<Player> showAllUsers() throws SQLException {
+        DbConfig db = new DbConfig();
+        Connection connection = db.createConnection();
+        List<Player> allPlayers = new ArrayList<>();
+        String sql = "SELECT * FROM player ORDER BY name ASC";
+
+        Statement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+                allPlayers.add(new Player(
+                        resultSet.getString("name"),
+                        resultSet.getString("last_name"),
+                        resultSet.getString("password")
+                ));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            if (statement != null) {
+                statement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return allPlayers;
     }
 }
